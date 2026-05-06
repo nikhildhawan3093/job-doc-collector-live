@@ -49,7 +49,7 @@ RUN echo '<VirtualHost *:80>\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-EXPOSE 80
+EXPOSE 3093
 
-# Railway injects $PORT — make Apache listen on it
-CMD ["sh", "-c", "sed -i \"s/Listen 80/Listen ${PORT:-80}/g\" /etc/apache2/ports.conf && sed -i \"s/:80>/:${PORT:-80}>/g\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+# Make Apache listen on port 3093
+CMD ["sh", "-c", "sed -i 's/Listen 80/Listen 3093/g' /etc/apache2/ports.conf && sed -i 's/:80>/:3093>/g' /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
