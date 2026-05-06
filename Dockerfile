@@ -50,5 +50,10 @@ RUN echo '<VirtualHost *:80>\n\
 
 EXPOSE 80
 
-# Remove mpm_event, use Railway's $PORT (default 80)
-CMD ["sh", "-c", "rm -f /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_event.load && PORT=${PORT:-80} && sed -i \"s/Listen 80/Listen $PORT/g\" /etc/apache2/ports.conf && sed -i \"s/:80>/:$PORT>/g\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+# Copy and use startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh && \
+    rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+          /etc/apache2/mods-enabled/mpm_event.load
+
+CMD ["/start.sh"]
