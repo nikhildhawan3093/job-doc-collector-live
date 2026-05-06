@@ -52,7 +52,7 @@ EXPOSE 80
 
 # Copy and use startup script
 COPY start.sh /start.sh
-RUN chmod +x /start.sh && \
+RUN sed -i 's/\r//' /start.sh && chmod +x /start.sh && \
     rm -f /etc/apache2/mods-enabled/mpm_event.conf \
           /etc/apache2/mods-enabled/mpm_event.load
 
