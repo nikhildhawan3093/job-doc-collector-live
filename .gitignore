@@ -1,0 +1,7 @@
+vendor/
+uploads/*
+!uploads/.gitkeep
+!uploads/reports/.gitkeep
+config/env.php
+.env
+*.log

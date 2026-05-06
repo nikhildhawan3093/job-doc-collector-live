@@ -1,0 +1,11 @@
+Options -Indexes
+RewriteEngine On
+
+# Redirect root to login
+RewriteRule ^$ pages/login.php [L,R=302]
+
+# Block direct access to config files
+RewriteRule ^config/ - [F,L]
+
+# Allow uploads to be served directly
+RewriteRule ^uploads/ - [L]
