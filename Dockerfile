@@ -48,7 +48,7 @@ RUN echo '<VirtualHost *:80>\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-EXPOSE 3093
+EXPOSE 80
 
-# Make Apache listen on port 3093
-CMD ["sh", "-c", "rm -f /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_event.load && sed -i 's/Listen 80/Listen 3093/g' /etc/apache2/ports.conf && sed -i 's/:80>/:3093>/g' /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+# Remove mpm_event, use Railway's $PORT (default 80)
+CMD ["sh", "-c", "rm -f /etc/apache2/mods-enabled/mpm_event.conf /etc/apache2/mods-enabled/mpm_event.load && PORT=${PORT:-80} && sed -i \"s/Listen 80/Listen $PORT/g\" /etc/apache2/ports.conf && sed -i \"s/:80>/:$PORT>/g\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
