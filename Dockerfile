@@ -19,10 +19,14 @@ RUN docker-php-ext-install pgsql pdo_pgsql zip \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Fix Apache MPM conflict — force prefork only
-RUN a2dismod mpm_event mpm_worker mpm_prefork 2>/dev/null || true \
-    && a2enmod mpm_prefork \
-    && a2enmod rewrite
+# Fix Apache MPM conflict — directly remove event/worker symlinks, keep prefork
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+          /etc/apache2/mods-enabled/mpm_event.load \
+          /etc/apache2/mods-enabled/mpm_worker.conf \
+          /etc/apache2/mods-enabled/mpm_worker.load \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load \
+    && ln -sf /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
 
 # Set working directory
 WORKDIR /var/www/html
