@@ -31,14 +31,16 @@ COPY . .
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Create uploads directories and set permissions
+# Set permissions
 RUN mkdir -p uploads/reports \
-    && chown -R www-data:www-data uploads \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
     && chmod -R 775 uploads
 
-# Apache config — enable AllowOverride for .htaccess
+# Apache config
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf \
-    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf \
+    && printf '<VirtualHost *:80>\n\tDocumentRoot /var/www/html\n\t<Directory /var/www/html>\n\t\tOptions Indexes FollowSymLinks\n\t\tAllowOverride All\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
