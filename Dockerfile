@@ -31,6 +31,9 @@ COPY . .
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Create env.php (reads MISTRAL_API_KEY from Railway environment at runtime)
+RUN echo '<?php define("MISTRAL_API_KEY", getenv("MISTRAL_API_KEY") ?: "");' > /var/www/html/config/env.php
+
 # Set permissions
 RUN mkdir -p uploads/reports \
     && chown -R www-data:www-data /var/www/html \
